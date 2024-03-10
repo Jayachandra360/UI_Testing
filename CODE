@@ -1,0 +1,46 @@
+from selenium import webdriver
+from datetime import datetime
+import os
+
+# List of browsers to test
+browsers = ['chrome', 'firefox']
+#path
+base_folder_path = r'C:\Users\jayac\OneDrive\Pictures\Screenshots\UI'
+
+# List of resolutions
+resolutions = {
+    'Desktop': ['1920x1080', '1366x768', '1536x864'],
+    'Mobile': ['360x640', '414x896', '375x667']
+}
+
+# Placeholder for URLs
+urls = [
+    'https://www.getcalley.com/',
+    'https://www.getcalley.com/calley-call-from-browser/',
+    'https://www.getcalley.com/calley-pro-features/',
+    'https://www.getcalley.com/best-auto-dialer-app/',
+    'https://www.getcalley.com/how-calley-auto-dialer-app-works/'
+    # Add more URLs as needed
+]
+
+
+# Function to take screenshots
+def take_screenshot(driver, device, resolution):
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    folder_path = os.path.join(base_folder_path, device, resolution)
+    os.makedirs(folder_path, exist_ok=True)
+    screenshot_path = os.path.join(folder_path, f'Screenshot-{timestamp}.png')
+    driver.save_screenshot(screenshot_path)
+
+# Main script
+for browser in browsers:
+    for device, resolutions_list in resolutions.items():
+        for resolution in resolutions_list:
+            driver = webdriver.Chrome() if browser == 'chrome' else webdriver.Firefox()
+            driver.set_window_size(*map(int, resolution.split('x')))
+            
+            for url in urls:  # Iterate through URLs
+                driver.get(url)
+                take_screenshot(driver, device, resolution)
+            
+            driver.quit()
